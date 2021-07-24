@@ -1,4 +1,6 @@
 # MDA-simulator
 Simulator for MDA sequencing
 
-start by running gui.py using python3
+requires python3, biopython, ttkthemes (install with pip)
+
+start by running gui.py

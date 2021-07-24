@@ -23,6 +23,7 @@ input_primers = []
 checkbox_values = [[],[]]
 products = []
 
+
 ########## ########## ########## ########## ########## ########## ########## ########## ########## ##########
 
 # add primers to globally saved list of primers
@@ -153,8 +154,8 @@ def calc():
     if len(input_sequence) == 0 or len(primers) == 0:
         print("You have to submit a sequence and at least 1 primer")
     else:
-        forward = add_Bars(input_sequence, primers[0], hamnum, True)   #forward
-        reverse = add_Bars(input_sequence, primers[1], hamnum, False)  #reverse
+        forward = add_Bars(input_sequence, primers[0], hamnum, True)   # forward
+        reverse = add_Bars(input_sequence, primers[1], hamnum, False)  # reverse
     
     products = primer_products(forward, reverse)
     product_sequences = get_product_sequences(products)
@@ -209,7 +210,7 @@ def primer_products(forward, reverse):
             if i[1] < j[0]:
                 products.append([i,j])                           
 
-    return (products)   # form: [[f_start,fw_end],[rv_s,rv_e]],...
+    return (products)   # form: [[f_start,fw_end],[rv_s,rv_e]], ...
 
 # clear input fields
 def clears():
@@ -222,54 +223,68 @@ def clearp():
 ########## ########## ########## ########## ########## ########## ########## ########## ########## ##########
 
 # visual representation
+# 1 column = 20
     
 # text 1: sequence
-ttk.Label(window, text="RNA sequence:", font="none 12 bold").grid(row=1, column=0, sticky=W)
+sqrow = 0
+ttk.Label(window, text="sequence:", font="none 12 bold").grid(row=sqrow, column=0, sticky=W)
 # text input 1
-textentry1 = ScrolledText(window, width=80, height=5)
-textentry1.grid(row=2, column=0, columnspan=3, sticky=W)
+textentry1 = ScrolledText(window, width=80, height=4)
+textentry1.grid(row=sqrow+1, column=0, columnspan=4, sticky=W)
+ttk.Label(window, text="").grid(row=sqrow+2,column=0)
+ttk.Label(window, text="").grid(row=sqrow+4,column=0)
     
 # text 2: primers
-ttk.Label(window, text="primers: (primer1, primer2, ...)", font="none 12 bold").grid(row=3, column=0, sticky=W)
+prrow = sqrow + 5
+ttk.Label(window, text="primers: (primer1, primer2, ...)", font="none 12 bold").grid(row=prrow, column=0, sticky=W, columnspan=2)
 # text input 2
 textentry2 = ScrolledText(window, width=80, height=3)
-textentry2.grid(row=4, column=0, columnspan=4, sticky=W)
+textentry2.grid(row=prrow+1, column=0, columnspan=4, sticky=W)
+ttk.Label(window, text="").grid(row=prrow+2,column=0)
+ttk.Label(window, text="").grid(row=prrow+4,column=0)
 
 # Buttons 
-buttoncol = 3
-ttk.Button(window, text="clear", width=15, command=clears).grid(row=2, column=buttoncol-1)
-ttk.Button(window, text="submit sequence", width=15, command=click_sequence).grid(row=2, column=buttoncol)
-ttk.Button(window, text="load file", width=15, command=read_sequence_file).grid(row=2, column=buttoncol+1)
+buttoncol = 1
+sqbrow = sqrow+3
+prbrow = prrow+3
 
-ttk.Button(window, text="clear", width=15, command=clearp).grid(row=4, column=buttoncol-1)
-ttk.Button(window, text="submit primers", width=15, command=click_primers).grid(row=4, column=buttoncol)
-ttk.Button(window, text="load file", width=15, command=read_primer_file).grid(row=4, column=buttoncol+1)
-ttk.Button(window, text="use covid primers", width=15, command=click_covid).grid(row=4, column=buttoncol+2)
+ttk.Button(window, text="clear", width=15, command=clears).grid(row=sqbrow, column=buttoncol-1)
+ttk.Button(window, text="submit sequence", width=15, command=click_sequence).grid(row=sqbrow, column=buttoncol)
+ttk.Button(window, text="load file", width=15, command=read_sequence_file).grid(row=sqbrow, column=buttoncol+1)
+
+ttk.Button(window, text="clear", width=15, command=clearp).grid(row=prbrow, column=buttoncol-1)
+ttk.Button(window, text="submit primers", width=15, command=click_primers).grid(row=prbrow, column=buttoncol)
+ttk.Button(window, text="load file", width=15, command=read_primer_file).grid(row=prbrow, column=buttoncol+1)
+ttk.Button(window, text="use covid primers", width=15, command=click_covid).grid(row=prbrow, column=buttoncol+2)
     
 # checkbox buttons for primers
-ttk.Label(window, text="forward primers:", font="none 12 bold", foreground="#0080FF").grid(row=5, column=0, sticky=W)
-ttk.Label(window, text="reverse primers:", font="none 12 bold", foreground="#46AC31").grid(row=5, column=1, sticky=W)
+chechboxrow = 10
+ttk.Label(window, text="forward primers:", font="none 12 bold", foreground="#0080FF").grid(row=chechboxrow, column=0, sticky=W)
+ttk.Label(window, text="reverse primers:", font="none 12 bold", foreground="#46AC31").grid(row=chechboxrow, column=2, sticky=W)
 
-checkboxframe0 = ScrolledText(window, width = 40, height = 10)
-checkboxframe0.grid(row=6,column=0, sticky=W)
+checkboxframe0 = ScrolledText(window, width = 40, height = 7)
+checkboxframe0.grid(row=chechboxrow+1,column=0, sticky=W, columnspan=2)
 
-checkboxframe1 = ScrolledText(window, width = 40, height = 10)
-checkboxframe1.grid(row=6,column=1, sticky=W)
+checkboxframe1 = ScrolledText(window, width = 40, height = 7)
+checkboxframe1.grid(row=chechboxrow+1,column=2, sticky=W, columnspan=2)
 
-#primer product output
-ttk.Label(window, text="primer products:", font="none 12 bold").grid(row=12, column=0, sticky=W)
-product_output = ScrolledText(window, width=200, height=10)
-product_output.grid(row=13, column=0, columnspan=7, sticky=W)
+ttk.Label(window, text="").grid(row=chechboxrow+2,column=0)
 
 # define number of mismatches
-ttk.Label(window, text="Number of allowed mismatches:", font="none 12 bold").grid(row=7, column=0, sticky=W)
+mmrow = chechboxrow + 3
+ttk.Label(window, text="number of allowed mismatches:", font="none 12 bold").grid(row=mmrow, column=0, sticky=W, columnspan=2)
 ham_num = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=240,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40)
-ham_num.grid(row=8,column=0, sticky="W")
+ham_num.grid(row=mmrow+1, column=0, sticky="W", columnspan=2)
+ttk.Label(window, text="").grid(row=mmrow+2,column=0)
 
-ttk.Button(window, text="calculate", width=15, command=calc).grid(row=9, column=1)
-ttk.Button(window, text="Chimerism 1", width=15, command=add_chimerism_model_1).grid(row=9, column=2)
+# calculation buttons
+calcrow = mmrow + 3
+ttk.Button(window, text="calculate", width=15, command=calc).grid(row=calcrow, column=0)
+ttk.Button(window, text="Chimerism 1", width=15, command=add_chimerism_model_1).grid(row=calcrow, column=1)
+ttk.Label(window, text="").grid(row=calcrow+1,column=0)
 
 # set up canvas
+cvrow = calcrow + 2
 canvas = Canvas(window, width=1030, height=100, background="#fafbfc") # used to be 1000, added with to make space for number
 # 0 mark
 canvas.create_text(
@@ -278,12 +293,18 @@ canvas.create_text(
     font="none 10 italic",
     text="0")
 # axis
-line = canvas.create_line(30,50,970,50) #(x1,y1, ..., xn, yn)
+line = canvas.create_line(30,50,970,50) # (x1,y1, ..., xn, yn)
 # add canvas to grid
-canvas.grid(row=11,column=0, columnspan=6)
+canvas.grid(row=cvrow,column=0, columnspan=100, sticky=W)
+ttk.Label(window, text="").grid(row=cvrow+1,column=0)
+
+#primer product output
+pprow = cvrow + 2
+ttk.Label(window, text="primer products:", font="none 12 bold").grid(row=pprow, column=0, sticky=W)
+product_output = ScrolledText(window, width=100, height=7)
+product_output.grid(row=pprow+1, column=0, columnspan=5, sticky=W)
 
 ########## ########## ########## ########## ########## ########## ########## ########## ########## ##########
 
 # RUN MAIN FRAME
 window.mainloop()
-

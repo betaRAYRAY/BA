@@ -8,7 +8,6 @@ def read_sequence(sequence):
 	return sequence
 
 def read_primers(prim_raw):	
-
 	prim_raw = prim_raw.upper()
 	primers = prim_raw.split(",")
 	# remove empty strings
@@ -36,11 +35,12 @@ def list_replace(string, list_before, list_after):
 
 def align_hamming(s, p, hamming_max): # sequence, primers, max dist
 	primer_places = []	
-	for k in p:
-		k_len = len(k)
-		for i in range(0,len(s)-k_len+1):
-			if (hamming_distance(k, s[i:i+k_len])) <= hamming_max:
-				primer_places.append([i,i+k_len])
+	
+	for i in range(len(p)):
+		primer_length = len(p[i])
+		for j in range(len(s) - primer_length + 1):
+			if (hamming_distance(p[i], s[j:j+primer_length])) <= hamming_max[i]:
+				primer_places.append([j,j+primer_length])
 	return(primer_places)
 
 def parse_fasta(path):
@@ -57,7 +57,7 @@ def build_rerverse_primers(p):
 		p[k] =  str(prim_seq.reverse_complement()) # for rna: reverse_complement_rna()
 		k = k+1
 	return(p)
-		
+
 def chimera_model_1(primer_products):
 	proportion = random()	
 	product1 = choice(primer_products)

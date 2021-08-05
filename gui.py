@@ -22,6 +22,7 @@ input_primers = []
 #
 checkbox_values = [[],[]]
 products = []
+mismatches = [[],[]]
 
 
 ########## ########## ########## ########## ########## ########## ########## ########## ########## ##########
@@ -54,7 +55,7 @@ def click_sequence():
     1000,50, # (identical offset to 0 : 980,50) , for long seqs overlap with line
     fill="black",
     font="none 10 italic",
-    text=len(input_sequence),
+    text=len(input_sequence)-1,
     tags = "seq_length")
 def read_sequence_file():
     global input_sequence
@@ -71,7 +72,7 @@ def read_sequence_file():
     1000,50,
     fill="black",
     font="none 10 italic",
-    text=len(input_sequence),
+    text=len(input_sequence)-1,
     tags = "seq_length")
 def read_primer_file():
     tf = filedialog.askopenfilename(
@@ -151,11 +152,18 @@ def calc():
     global input_sequence, products
     primers = use_primer()
     hamnum = ham_num.get()
+
+    # get individual mismatch values for every primer [[forward][reverse]]
+    mismatch_values = [[0]*len(mismatches[0]),[0]*len(mismatches[0])]
+    for i in range(len(mismatches[0])):
+        mismatch_values[0][i] = mismatches[0][i].get()
+        mismatch_values[1][i] = mismatches[1][i].get()
+
     if len(input_sequence) == 0 or len(primers) == 0:
         print("You have to submit a sequence and at least 1 primer")
     else:
-        forward = add_Bars(input_sequence, primers[0], hamnum, True)   # forward
-        reverse = add_Bars(input_sequence, primers[1], hamnum, False)  # reverse
+        forward = add_Bars(input_sequence, primers[0], mismatch_values[0], True)   # forward
+        reverse = add_Bars(input_sequence, primers[1], mismatch_values[1], False)  # reverse
     
     products = primer_products(forward, reverse)
     product_sequences = get_product_sequences(products)
@@ -182,9 +190,11 @@ def delete():
 
 # primers check boxes
 def list_primers(primers):
-    global checkboxes, checkbox_values
+    global checkboxes, checkbox_values, mismatches
     checkboxes0 = [IntVar()] * len(primers)
     checkboxes1 = [IntVar()] * len(primers)
+    mismatches0 = []
+    mismatches1 = []
     k=0
     for i in primers:
         var0 = IntVar(value=1)
@@ -195,11 +205,20 @@ def list_primers(primers):
         i_seq = Seq(i)
         i_seq = str(i_seq.reverse_complement())
         box1 = ttk.Checkbutton(window, text=i_seq, variable=var1)
+
+        mm0 = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=100,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40)
+        mismatches0.append(mm0)
+        mm1 = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=100,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40)
+        mismatches1.append(mm1)
+
         checkboxframe0.window_create("end", window = box0)
+        checkboxframe0.window_create("end", window = mm0)
         checkboxframe0.insert("end", "\n")
         checkboxframe1.window_create("end", window = box1)
+        checkboxframe1.window_create("end", window = mm1)
         checkboxframe1.insert("end", "\n")
         k += 1
+    mismatches = [mismatches0,mismatches1] 
 
 # primer products
 def primer_products(forward, reverse):
@@ -219,6 +238,13 @@ def clearp():
     textentry2.delete(1.0,"end")
     checkboxframe0.delete(1.0,"end")
     checkboxframe1.delete(1.0,"end")
+
+# change all mismatch values
+def all_mismatches(value):
+    for i in mismatches[0]:
+        i.set(value)
+    for j in mismatches[1]:
+        j.set(value)
 
 ########## ########## ########## ########## ########## ########## ########## ########## ########## ##########
 
@@ -260,7 +286,9 @@ ttk.Button(window, text="use covid primers", width=15, command=click_covid).grid
 # checkbox buttons for primers
 chechboxrow = 10
 ttk.Label(window, text="forward primers:", font="none 12 bold", foreground="#0080FF").grid(row=chechboxrow, column=0, sticky=W)
+ttk.Label(window, text="mismatches").grid(row=chechboxrow, column=1, sticky=W)
 ttk.Label(window, text="reverse primers:", font="none 12 bold", foreground="#46AC31").grid(row=chechboxrow, column=2, sticky=W)
+ttk.Label(window, text="mismatches").grid(row=chechboxrow, column=3, sticky=W)
 
 checkboxframe0 = ScrolledText(window, width = 40, height = 7)
 checkboxframe0.grid(row=chechboxrow+1,column=0, sticky=W, columnspan=2)
@@ -272,8 +300,8 @@ ttk.Label(window, text="").grid(row=chechboxrow+2,column=0)
 
 # define number of mismatches
 mmrow = chechboxrow + 3
-ttk.Label(window, text="number of allowed mismatches:", font="none 12 bold").grid(row=mmrow, column=0, sticky=W, columnspan=2)
-ham_num = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=240,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40)
+ttk.Label(window, text="change allowed mismatches for all primers:", font="none 12 bold").grid(row=mmrow, column=0, sticky=W, columnspan=2)
+ham_num = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=240,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40, command=all_mismatches)
 ham_num.grid(row=mmrow+1, column=0, sticky="W", columnspan=2)
 ttk.Label(window, text="").grid(row=mmrow+2,column=0)
 
@@ -308,3 +336,4 @@ product_output.grid(row=pprow+1, column=0, columnspan=5, sticky=W)
 
 # RUN MAIN FRAME
 window.mainloop()
+

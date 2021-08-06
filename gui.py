@@ -165,7 +165,7 @@ def calc():
         forward = add_Bars(input_sequence, primers[0], mismatch_values[0], True)   # forward
         reverse = add_Bars(input_sequence, primers[1], mismatch_values[1], False)  # reverse
     
-    products = primer_products(forward, reverse)
+    products = functions.primer_products(forward, reverse, terminationProbability.get(), numberOfProducts.get())
     product_sequences = get_product_sequences(products)
     g = 0
     product_output.delete(1.0, END)
@@ -219,17 +219,6 @@ def list_primers(primers):
         checkboxframe1.insert("end", "\n")
         k += 1
     mismatches = [mismatches0,mismatches1] 
-
-# primer products
-def primer_products(forward, reverse):
-    products = []
-    
-    for i in forward:
-        for j in reverse:
-            if i[1] < j[0]:
-                products.append([i,j])                           
-
-    return (products)   # form: [[f_start,fw_end],[rv_s,rv_e]], ...
 
 # clear input fields
 def clears():
@@ -299,14 +288,30 @@ checkboxframe1.grid(row=chechboxrow+1,column=2, sticky=W, columnspan=2)
 ttk.Label(window, text="").grid(row=chechboxrow+2,column=0)
 
 # define number of mismatches
-mmrow = chechboxrow + 3
-ttk.Label(window, text="change allowed mismatches for all primers:", font="none 12 bold").grid(row=mmrow, column=0, sticky=W, columnspan=2)
-ham_num = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=240,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40, command=all_mismatches)
-ham_num.grid(row=mmrow+1, column=0, sticky="W", columnspan=2)
+mmrow = chechboxrow
+ttk.Label(window, text="all mismatches:", font="none 12 bold").grid(row=mmrow, column=4, sticky=W, columnspan=2)
+ham_num = Scale(window, from_=0, to=5, orient=HORIZONTAL, length=250,background="#fafbfc", troughcolor="#1ee9b7",sliderlength=40, command=all_mismatches)
+ham_num.grid(row=mmrow+1, column=4, sticky="N", columnspan=2)
 ttk.Label(window, text="").grid(row=mmrow+2,column=0)
 
+# add randomness
+randrow = mmrow + 3
+ttk.Label(window, text="number of produced products", font="none 10 bold").grid(row=randrow, sticky=W)
+ttk.Label(window, text="termination probability \in [0,1]", font="none 10 bold").grid(row=randrow+1, sticky=W)
+
+ttk.Label(window, text="default: each primer product is produced once").grid(row=randrow, column=2, sticky=W)
+ttk.Label(window, text="default: 0 (every product is produced in full length)").grid(row=randrow+1, column=2, sticky=W)
+
+numberOfProducts = ttk.Entry(window)
+terminationProbability = ttk.Entry(window)
+
+numberOfProducts.grid(row=randrow, column=1, sticky=W)
+terminationProbability.grid(row=randrow+1, column=1, sticky=W)
+
+ttk.Label(window, text="").grid(row=randrow+2,column=0)
+
 # calculation buttons
-calcrow = mmrow + 3
+calcrow = randrow + 3
 ttk.Button(window, text="calculate", width=15, command=calc).grid(row=calcrow, column=0)
 ttk.Button(window, text="Chimerism 1", width=15, command=add_chimerism_model_1).grid(row=calcrow, column=1)
 ttk.Label(window, text="").grid(row=calcrow+1,column=0)

@@ -58,6 +58,45 @@ def build_rerverse_primers(p):
 		k = k+1
 	return(p)
 
+def randomize_products(primer_products, termination_probability, product_number):
+	print("pn")
+	print(product_number)
+	print("tp")
+	print(termination_probability)
+	if (termination_probability == "" and product_number == ""):
+		return primer_products
+	if (termination_probability == ""):
+		prod_array = []
+		for i in range(int(product_number)):
+			element = random.choice(primer_products)
+			prod_array.append(element)
+		return prod_array
+	if (product_number == ""):
+		for i in primer_products:
+			terminated = False
+			# length = 
+			while(terminated == False):
+				print("todo")
+
+	else:
+		for i in range(product_number):
+			# choose a random primer product
+			print("TODO")
+			# shorten it using termination_probability
+			print("TODO")
+	return 1
+
+# primer products
+def primer_products(forward, reverse, t_p, p_n):
+    products = []
+    
+    for i in forward:
+        for j in reverse:
+            if i[1] < j[0]:
+                products.append([i,j])
+    TODO = randomize_products(products, t_p, p_n)
+    return (products)   # form: [[f_start,fw_end],[rv_s,rv_e]], ...
+
 def chimera_model_1(primer_products):
 	proportion = random()	
 	product1 = choice(primer_products)

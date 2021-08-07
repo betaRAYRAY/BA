@@ -59,32 +59,54 @@ def build_rerverse_primers(p):
 	return(p)
 
 def randomize_products(primer_products, termination_probability, product_number):
-	print("pn")
-	print(product_number)
-	print("tp")
-	print(termination_probability)
+	if (len(primer_products) == 0):
+		print("error: no primer products possible for the used parameters")
+		return(primer_products)
 	if (termination_probability == "" and product_number == ""):
 		return primer_products
 	if (termination_probability == ""):
 		prod_array = []
 		for i in range(int(product_number)):
-			element = random.choice(primer_products)
+			element = choice(primer_products)
 			prod_array.append(element)
 		return prod_array
 	if (product_number == ""):
+		# fw primer (and rv primer if reached) always preserved as a whole
+		resultset = []
 		for i in primer_products:
 			terminated = False
-			# length = 
-			while(terminated == False):
-				print("todo")
-
+			length = i[1][0] - i[0][1] # start of rv primer - end of fw primer
+			j = 0
+			while(terminated == False and j <= length):
+				randnum = random()
+				if (randnum <= float(termination_probability)):
+					shortened_product = [[i[0][0], i[0][1]], [i[0][1]+j, i[0][1]+j]] #no rv primer, start and end rv primer same pos
+					resultset.append(shortened_product)	
+					terminated = True
+				j = j+1
+			if(terminated == False):
+				resultset.append(i)	# i is left unchanged
+		return(resultset)	
 	else:
-		for i in range(product_number):
+
+		resultset = []
+		for i in range(int(product_number)):
 			# choose a random primer product
-			print("TODO")
+			element = choice(primer_products)
 			# shorten it using termination_probability
-			print("TODO")
-	return 1
+			terminated = False
+			length = element[1][0] - element[0][1] # start of rv primer - end of fw primer
+			j = 0
+			while(terminated == False and j <= length):
+				randnum = random()
+				if (randnum <= float(termination_probability)):
+					shortened_product = [[element[0][0], element[0][1]], [element[0][1]+j, element[0][1]+j]] #no rv primer, start and end rv primer same pos
+					resultset.append(shortened_product)	
+					terminated = True
+				j = j+1
+			if(terminated == False):
+				resultset.append(element)	# element is left unchanged
+		return(resultset)	
 
 # primer products
 def primer_products(forward, reverse, t_p, p_n):
@@ -94,8 +116,8 @@ def primer_products(forward, reverse, t_p, p_n):
         for j in reverse:
             if i[1] < j[0]:
                 products.append([i,j])
-    TODO = randomize_products(products, t_p, p_n)
-    return (products)   # form: [[f_start,fw_end],[rv_s,rv_e]], ...
+    products = randomize_products(products, t_p, p_n)
+    return (products)   # form: [[fw_start,fw_end],[rv_s,rv_e]], ...
 
 def chimera_model_1(primer_products):
 	proportion = random()	
@@ -103,5 +125,5 @@ def chimera_model_1(primer_products):
 	product2 = choice(primer_products)
 	chimerism_1 = [product1[0][0], (product1[1][1]-product1[0][0])*proportion]
 	chimerism_2 = [(product2[1][1]-product2[0][0])*proportion, product2[1][1]]	# perhaps 1 char less? (1 char overlap)
-	print(str([chimerism_1,chimerism_2]))
+	#print(str([chimerism_1,chimerism_2]))
 	return [chimerism_1,chimerism_2]

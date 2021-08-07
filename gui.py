@@ -297,7 +297,7 @@ ttk.Label(window, text="").grid(row=mmrow+2,column=0)
 # add randomness
 randrow = mmrow + 3
 ttk.Label(window, text="number of produced products", font="none 10 bold").grid(row=randrow, sticky=W)
-ttk.Label(window, text="termination probability \in [0,1]", font="none 10 bold").grid(row=randrow+1, sticky=W)
+ttk.Label(window, text="termination probability per symbol ∈ [0,1]", font="none 10 bold").grid(row=randrow+1, sticky=W)
 
 ttk.Label(window, text="default: each primer product is produced once").grid(row=randrow, column=2, sticky=W)
 ttk.Label(window, text="default: 0 (every product is produced in full length)").grid(row=randrow+1, column=2, sticky=W)
